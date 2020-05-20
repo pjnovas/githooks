@@ -20,11 +20,11 @@ module.exports = {
   },
 
   my-website: {
-    secret: '1234',
+    secret: '5678',
     when: 'push',
     dir: '/var/www/my-website',
 
-    // with conditionals > if return is falsy, wont execute
+    // with conditionals > if result is falsy, won't execute
     run: ({ ref }) =>
       ref === 'refs/heads/master'
         ? 'git pull origin master && pm2 restart my-website'
@@ -40,17 +40,17 @@ npm install --production
 PORT=3000 npm start
 ```
 
+Then you will have exposed the following routes:
+
+- `POST http://localhost:3000/awesome-api`: as webhook
+- `POST http://localhost:3000/my-website`: as webhook
+- `GET http://localhost:3000/healthcheck`: a quick healthcheck of the service
+
 You should use pm2 on production env.
 
 ## How it works
 
-When a web hook calls in if get the expected repo from `repos.json` and run the following commands as the user which this script is run with.
-
-```bash
-cd [repo]
-git pull
-docker-compose up --build --remove-orphans -d
-```
+[TODO]
 
 ## Contribute
 

@@ -7,7 +7,8 @@
     "node": ">= 12.0.0"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": ""
   },
   "author": "Pablo Novas <pjnovas@gmail.com>",
   "license": "ISC",
