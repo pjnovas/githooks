@@ -4,7 +4,7 @@ nodejs script to run commands from git web hooks
 
 ## Getting started
 
-Create a `repos.json` at this root like:
+Create a `repos.js` at this root like:
 
 ```js
 module.exports = {
