@@ -21,7 +21,7 @@ Object.keys(repos).forEach(key => {
       const name = req.get('X-GitHub-Event');
 
       if (when === name) {
-        const cmd = run(payload, name);
+        const cmd = run(req.body, name);
 
         if (cmd) {
           exec(`cd ${dir}`);
