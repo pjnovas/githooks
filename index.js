@@ -3,7 +3,7 @@ const http = require('http');
 const exec = require('child_process').exec;
 
 var nodeCleanup = require('node-cleanup');
-const { Webhooks } = require('@octokit/webhooks');
+const { createMiddleware } = require('@octokit/webhooks');
 
 const repos = require('./repos');
 
@@ -19,15 +19,24 @@ const hooks = Object.keys(repos).map(key => {
     }
   };
 
-  const hook = new Webhooks({ secret }).on(when, handler);
-  return () => hook.removeListener(when, handler);
+  const middleware = createMiddleware({
+    secret,
+    path: `/${key}`
+  });
+
+  middleware.on(when, handler);
+
+  return {
+    middleware,
+    clean: () => middleware.removeListener(when, handler)
+  };
 });
 
 const server = http
-  .createServer(webhooks.middleware)
+  .createServer(hooks.map(({ middleware }) => middleware))
   .listen(process.env.PORT || 8080);
 
 nodeCleanup(() => {
   server.close();
-  hooks.forEach(clean => clean());
+  hooks.forEach(({ clean }) => clean());
 });
