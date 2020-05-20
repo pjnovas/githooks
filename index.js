@@ -1,12 +1,17 @@
 const process = require('process');
-const http = require('http');
 const exec = require('child_process').exec;
 
-var nodeCleanup = require('node-cleanup');
-const { createMiddleware } = require('@octokit/webhooks');
+const express = require('express');
+const healthcheck = require('healthcheck-middleware');
+const nodeCleanup = require('node-cleanup');
+const { Webhooks } = require('@octokit/webhooks');
 
 const repos = require('./repos');
 const port = process.env.PORT || 8080;
+
+const app = express();
+
+app.use('/healthcheck', healthcheck());
 
 const hooks = Object.keys(repos).map(key => {
   const { secret, when, dir, run } = repos[key];
@@ -20,26 +25,19 @@ const hooks = Object.keys(repos).map(key => {
     }
   };
 
-  const middleware = createMiddleware({
-    secret,
-    path: `/${key}`
-  });
+  const webhooks = new Webhooks({ secret });
 
-  middleware.on(when, handler);
+  app.post(`/${key}`, webhooks.middleware);
+  webhooks.on(when, handler);
 
   return {
-    middleware,
-    clean: () => middleware.removeListener(when, handler)
+    webhooks,
+    clean: () => webhooks.removeListener(when, handler)
   };
 });
 
-const server = http
-  .createServer(hooks.map(({ middleware }) => middleware))
-  .listen(port);
+app.listen(port, () => console.log(`listening at ${port} port`));
 
 nodeCleanup(() => {
-  server.close();
   hooks.forEach(({ clean }) => clean());
 });
-
-console.log(`Listener Server Started at ${port}`);
