@@ -6,6 +6,7 @@ var nodeCleanup = require('node-cleanup');
 const { createMiddleware } = require('@octokit/webhooks');
 
 const repos = require('./repos');
+const port = process.env.PORT || 8080;
 
 const hooks = Object.keys(repos).map(key => {
   const { secret, when, dir, run } = repos[key];
@@ -34,9 +35,11 @@ const hooks = Object.keys(repos).map(key => {
 
 const server = http
   .createServer(hooks.map(({ middleware }) => middleware))
-  .listen(process.env.PORT || 8080);
+  .listen(port);
 
 nodeCleanup(() => {
   server.close();
   hooks.forEach(({ clean }) => clean());
 });
+
+console.log(`Listener Server Started at ${port}`);
