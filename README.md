@@ -18,6 +18,7 @@ module.exports = {
     run: ({ release: { tag_name } }) =>
       `git fetch && git checkout ${tag_name} && docker-compose up --build --remove-orphans -d`
   },
+
   my-website: {
     secret: '1234',
     when: 'push',
