@@ -48,10 +48,6 @@ Then you will have exposed the following routes:
 
 You should use pm2 on production env.
 
-## How it works
-
-[TODO]
-
 ## Contribute
 
 Running tests:
