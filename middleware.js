@@ -16,11 +16,11 @@ module.exports = ({ secret, when, dir, run }) => (req, res) => {
   }
 
   if (action && action !== req.body.action) {
-    console.log('ignored event because of action', action);
+    console.log('ignored event because of action', req.body.action);
     return res.status(200).send('OK, but ignoring action');
   }
 
-  console.log('executing event', name);
+  console.log('executing event', name, action);
 
   const cmd = run(req.body, name);
   if (cmd) {
