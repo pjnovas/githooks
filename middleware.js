@@ -1,4 +1,4 @@
-const exec = require('child_process').exec;
+const spawn = require('child_process').spawn;
 const { verify } = require('@octokit/webhooks');
 
 module.exports = ({ secret, when, dir, run }) => (req, res) => {
@@ -24,8 +24,8 @@ module.exports = ({ secret, when, dir, run }) => (req, res) => {
 
   const cmd = run(req.body, name);
   if (cmd) {
-    exec(`cd ${dir}`);
-    exec(cmd);
+    console.log('> ', cmd);
+    spawn(`cd ${dir} && ${cmd}`, { stdio: 'inherit' });
   }
 
   res.sendStatus(200);
