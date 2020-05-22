@@ -7,13 +7,21 @@ module.exports = ({ secret, when, dir, run }) => (req, res) => {
   }
 
   const name = req.get('X-GitHub-Event');
-  console.log('received event ', name);
+  console.log('received event', name);
 
-  if ((Array.isArray(when) && !when.includes(name)) || when !== name) {
+  // TODO: support an array on "when"
+  const [event, action] = when.split('.');
+  if (name !== event) {
     return res.status(400).send('event name unexpected');
   }
 
-  console.log('executing event ', name);
+  if (action && action !== req.body.action) {
+    console.log('ignored event because of action', action);
+    return res.status(200).send('OK, but ignoring action');
+  }
+
+  console.log('executing event', name);
+
   const cmd = run(req.body, name);
   if (cmd) {
     exec(`cd ${dir}`);
