@@ -9,6 +9,10 @@ module.exports = ({ secret, when, dir, run }) => (req, res) => {
   const name = req.get('X-GitHub-Event');
   console.log('received event', name);
 
+  if (name === 'ping') {
+    return res.status(200).send('PONG');
+  }
+
   // TODO: support an array on "when"
   const [event, action] = when.split('.');
   if (name !== event) {
