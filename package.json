@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@octokit/webhooks": "^7.6.1",
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "healthcheck-middleware": "^1.0.1"
   },
   "devDependencies": {}
